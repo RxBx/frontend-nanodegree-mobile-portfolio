@@ -444,26 +444,26 @@ var resizePizzas = function(size) {
 
     // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
     //function determineDx(elem, size) {
-        //var oldWidth = elem.offsetWidth;
-        //var windowWidth = document.getElementById("randomPizzas").offsetWidth;
-        //var oldSize = oldWidth / windowWidth;
+    //var oldWidth = elem.offsetWidth;
+    //var windowWidth = document.getElementById("randomPizzas").offsetWidth;
+    //var oldSize = oldWidth / windowWidth;
 
-        // TODO: change to 3 sizes? no more xl?
-        // Changes the slider value to a percent width
-        function sizeSwitcher(size) {
-            switch (size) {
-                case "1":
-                    //return 0.25;
-                    return "25%";
-                case "2":
-                    //return 0.3333;
-                    return "33.33%";
-                case "3":
-                    //return 0.5;
-                    return "50%";
-                default:
-                    console.log("bug in sizeSwitcher");
-            }
+    // TODO: change to 3 sizes? no more xl?
+    // Changes the slider value to a percent width
+    function sizeSwitcher(size) {
+        switch (size) {
+            case "1":
+                //return 0.25;
+                return "25%";
+            case "2":
+                //return 0.3333;
+                return "33.33%";
+            case "3":
+                //return 0.5;
+                return "50%";
+            default:
+                console.log("bug in sizeSwitcher");
+        }
         //}
 
         //var newSize = sizeSwitcher(size);
@@ -472,7 +472,7 @@ var resizePizzas = function(size) {
 
         //return dx;
     }
-var newWidth = sizeSwitcher(size);
+    var newWidth = sizeSwitcher(size);
     // Iterates through pizza elements on the page and changes their widths
     function changePizzaSizes(size) {
         for (var i = 0; i < document.getElementsByClassName("randomPizzaContainer").length; i++) {
@@ -523,8 +523,26 @@ function logAverageFrame(times) { // times is the array of User Timing measureme
 // https://www.igvita.com/slides/2012/devtools-tips-and-tricks/jank-demo.html
 
 // Moves the sliding background pizzas based on scroll position
+
+var intervalTimer = []; // timer to log updatePositions cycle
+
 function updatePositions() {
     frame++;
+
+// Document length of update cycle
+    intervalTimer[frame] = Date.now();
+
+    if (frame > 3) {
+      var frameDiff = intervalTimer[frame] - intervalTimer[frame - 1];
+        console.log(frameDiff);
+        /*if (intervalTimer[intervalTimer.length - 1] - intervalTimer[intervalTimer.length - 2] < 5) {
+            clearTimeout(timeout);
+            var timeout = setTimeout(function() {
+                console.log("happened");
+            }, 500);
+        }*/
+    }
+
     window.performance.mark("mark_start_frame");
 
     var items = document.getElementsByClassName('mover');
@@ -544,7 +562,11 @@ function updatePositions() {
     // User Timing API to the rescue again. Seriously, it's worth learning.
     // Super easy to create custom metrics.
     window.performance.mark("mark_end_frame");
+    //console.log(window.performance.getEntriesByName("measure_frame_duration"));
+
     window.performance.measure("measure_frame_duration", "mark_start_frame", "mark_end_frame");
+    intervals = window.performance.getEntriesByName("measure_frame_duration");
+
     if (frame % 10 === 0) {
         var timesToUpdatePosition = window.performance.getEntriesByName("measure_frame_duration");
         logAverageFrame(timesToUpdatePosition);
