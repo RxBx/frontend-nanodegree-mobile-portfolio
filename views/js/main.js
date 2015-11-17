@@ -449,18 +449,19 @@ var resizePizzas = function(size) {
     //var oldSize = oldWidth / windowWidth;
 
     // TODO: change to 3 sizes? no more xl?
-    // Changes the slider value to a percent width
+    //SIMPLIFY NEW WIDTH ASSIGNMENT CODE
+    // Changes the slider value to a percent width number
     function sizeSwitcher(size) {
         switch (size) {
             case "1":
                 //return 0.25;
-                return "25%";
+                return 25;
             case "2":
                 //return 0.3333;
-                return "33.33%";
+                return 33.33;
             case "3":
                 //return 0.5;
-                return "50%";
+                return 50;
             default:
                 console.log("bug in sizeSwitcher");
         }
@@ -472,7 +473,8 @@ var resizePizzas = function(size) {
 
         //return dx;
     }
-    var newWidth = sizeSwitcher(size);
+    //create percentage string for newWidth
+    var newWidth = sizeSwitcher(size) + "%" ;
     // Iterates through pizza elements on the page and changes their widths
     function changePizzaSizes(size) {
         for (var i = 0; i < document.getElementsByClassName("randomPizzaContainer").length; i++) {
@@ -546,17 +548,19 @@ function updatePositions() {
     window.performance.mark("mark_start_frame");
 
     var items = document.getElementsByClassName('mover');
+    // measure layout property scrollTop before style calcs to avoid FSL
+    var scrollTopNow = document.body.scrollTop ;
     //calculate "phase" for each of the 5 possible positionings
     //create phase array
-    var phase = [];
-    // create 5 phase values based on scroll position at time of update;
+    var phaseNow = [];
+    // create 5 phase values based on current scroll position
     for (j = 0; j < 5; j++) {
-        phase[j] = Math.sin((document.body.scrollTop / 1250) + j);
+        phaseNow[j] = Math.sin((scrollTopNow / 1250) + j);
     }
-
+    // use phase array w modulo 5 to cycle thru all items withought causing FSL
     for (var i = 0; i < items.length; i++) {
         //var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
-        items[i].style.left = items[i].basicLeft + 100 * phase[(i % 5)] + 'px';
+        items[i].style.left = items[i].basicLeft + 100 * phaseNow[(i % 5)] + 'px';
     }
 
     // User Timing API to the rescue again. Seriously, it's worth learning.
@@ -581,8 +585,10 @@ function updatePositions() {
 document.addEventListener('DOMContentLoaded', function() {
     var cols = 8;
     var s = 256;
+    var elem;
+    // reduce number of "moving pizzas" - most not on screen - to 5 rows of 8
     for (var i = 0; i < 40; i++) {
-        var elem = document.createElement('img');
+        elem = document.createElement('img');
         elem.className = 'mover';
         //var position = "position" + (i % 5 + 1);
         //elem.classList.add(position);

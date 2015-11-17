@@ -78,7 +78,8 @@ header {
     color: #C90B0B;
 }
 
-.header-img {
+/* Use BEM methods to use faster classes instead of selector chains */
+.header_img {
     border-radius: 40px;
     float: left;
 }
@@ -106,17 +107,17 @@ header {
     padding: 1em 1em;
 }
 
-.content li {
+.content_li {
     list-style-type: none;
     font-size: 1.1em;
 }
 
-li img {
+.content_li_img {
     float: left;
     padding-right: 1em;
 }
 
-li p {
+.content_li_p {
     font-size: 0.9em;
     font-style: italic;
 }
