@@ -9,7 +9,7 @@ I edited files and wrote original code to increase performance of index.html, an
 ###Loading and Examining the project
 
 - You can view and analyze a live version of the project thru GitHub Pages:
-rxbx.github.io/frontend-nanodegree-mobile-portfolio/
+http://rxbx.github.io/frontend-nanodegree-mobile-portfolio/
 
 - You can examine the original files at the following link:
 https://github.com/RxBx/frontend-nanodegree-mobile-portfolio
