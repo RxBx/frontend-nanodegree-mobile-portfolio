@@ -32,7 +32,7 @@ Here is a summary of optimizations I made to improve performance on the two spec
 
 Generally: used faster selector methods "getElementById" & "GetElementsByClassName" instead of "querySelector" etc.
 
-Also, minified the javascript file (and used link to minified file in HTML
+Also, minified the javascript file (and used link to minified file in HTML)
 
 ####"slider"
 - reduced complexity of calculation for new column widths when user activates "size slider"
