@@ -1,3 +1,13 @@
+/* This is part of Project 4 for Front End Web Development
+ * Source files were provided.
+ * We were directed to analyze code for problems that introduced "jank" in browser perf
+ * Goal was to make sure project could perform at 60fps
+ * SLIDER used complicated code to recalculate column widths
+ * BACKGROUND PIZZAS animated on scroll, but created redundant layout changes due to placement
+ * of layout measurment in a style loop that affected layout (Forced Synchronous Layout)
+ * Also, the JS created many, many unviewed image elements.
+ * Other minor changes in selector methods also improved performance.
+ */
 /*
 Welcome to the 60fps project! Your goal is to make Cam's Pizzeria website run
 jank-free at 60 frames per second.
@@ -420,6 +430,10 @@ var pizzaElementGenerator = function(i) {
 };
 
 // resizePizzas(size) is called when the slider in the "Our Pizzas" section of the website moves.
+
+/* Improvements in this section involve simplying calculation of the new column width
+ * Also used faster selector methods "getElementById" & "GetElementsByClassName" instead of "querySelector"
+ */
 var resizePizzas = function(size) {
     window.performance.mark("mark_start_resize"); // User Timing API function
 
@@ -443,10 +457,6 @@ var resizePizzas = function(size) {
     changeSliderLabel(size);
 
     // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
-    //function determineDx(elem, size) {
-    //var oldWidth = elem.offsetWidth;
-    //var windowWidth = document.getElementById("randomPizzas").offsetWidth;
-    //var oldSize = oldWidth / windowWidth;
 
     // TODO: change to 3 sizes? no more xl?
     //SIMPLIFY NEW WIDTH ASSIGNMENT CODE
@@ -465,22 +475,15 @@ var resizePizzas = function(size) {
             default:
                 console.log("bug in sizeSwitcher");
         }
-        //}
-
-        //var newSize = sizeSwitcher(size);
-
-        //var dx = (newSize - oldSize) * windowWidth;
-
-        //return dx;
     }
     //create percentage string for newWidth
-    var newWidth = sizeSwitcher(size) + "%" ;
+    var newWidth = sizeSwitcher(size) + "%";
+    //put all pizzas in a variable
+    var pizzaGroup = document.getElementsByClassName("randomPizzaContainer");
     // Iterates through pizza elements on the page and changes their widths
     function changePizzaSizes(size) {
-        for (var i = 0; i < document.getElementsByClassName("randomPizzaContainer").length; i++) {
-            //var dx = determineDx(document.getElementsByClassName("randomPizzaContainer")[i], size);
-            //var newwidth = (document.getElementsByClassName("randomPizzaContainer")[i].offsetWidth + dx) + 'px';
-            document.getElementsByClassName("randomPizzaContainer")[i].style.width = newWidth;
+        for (var i = 0; i < pizzaGroup.length; i++) {
+            pizzaGroup[i].style.width = newWidth;
         }
     }
 
@@ -526,30 +529,19 @@ function logAverageFrame(times) { // times is the array of User Timing measureme
 
 // Moves the sliding background pizzas based on scroll position
 
-var intervalTimer = []; // timer to log updatePositions cycle
-
+/* To fix updatePositions Forced Synchronous Layout , I moved a layout measurement
+ * out of a style.left loop. I also made a phase array that captured all the 5 possible
+ * values for phase, which I then used inside the style.left loop.
+ * I also used "GetElementsByClassName" instead of "querySelectorAll"
+ */
 function updatePositions() {
     frame++;
-
-// Document length of update cycle
-    intervalTimer[frame] = Date.now();
-
-    if (frame > 3) {
-      var frameDiff = intervalTimer[frame] - intervalTimer[frame - 1];
-        console.log(frameDiff);
-        /*if (intervalTimer[intervalTimer.length - 1] - intervalTimer[intervalTimer.length - 2] < 5) {
-            clearTimeout(timeout);
-            var timeout = setTimeout(function() {
-                console.log("happened");
-            }, 500);
-        }*/
-    }
 
     window.performance.mark("mark_start_frame");
 
     var items = document.getElementsByClassName('mover');
     // measure layout property scrollTop before style calcs to avoid FSL
-    var scrollTopNow = document.body.scrollTop ;
+    var scrollTopNow = document.body.scrollTop;
     //calculate "phase" for each of the 5 possible positionings
     //create phase array
     var phaseNow = [];
@@ -575,11 +567,10 @@ function updatePositions() {
         var timesToUpdatePosition = window.performance.getEntriesByName("measure_frame_duration");
         logAverageFrame(timesToUpdatePosition);
     }
-    requestAnimationFrame(updatePositions);
 }
 
 // runs updatePositions on scroll
-//window.addEventListener('scroll', updatePositions);
+window.addEventListener('scroll', updatePositions);
 
 // Generates the sliding pizzas when the page loads.
 document.addEventListener('DOMContentLoaded', function() {
@@ -590,8 +581,6 @@ document.addEventListener('DOMContentLoaded', function() {
     for (var i = 0; i < 40; i++) {
         elem = document.createElement('img');
         elem.className = 'mover';
-        //var position = "position" + (i % 5 + 1);
-        //elem.classList.add(position);
         elem.src = "images/pizza.png";
         elem.style.height = "100px";
         elem.style.width = "73.333px";

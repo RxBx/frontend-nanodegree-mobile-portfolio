@@ -78,7 +78,9 @@ header {
     color: #C90B0B;
 }
 
+
 /* Use BEM methods to use faster classes instead of selector chains */
+
 .header_img {
     border-radius: 40px;
     float: left;
